@@ -116,4 +116,16 @@ def receive_webhook():
                             reply_text,
                         )
 
-    
+    except Exception as error:
+        print(
+            "Webhook processing error:",
+            str(error),
+            flush=True,
+        )
+
+    return jsonify({"status": "received"}), 200
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
