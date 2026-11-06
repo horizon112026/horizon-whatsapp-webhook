@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: horizon-whatsapp-webhook
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: VERIFY_TOKEN
+        sync: false
