@@ -14,7 +14,23 @@ GRAPH_API_VERSION = "v27.0"
 @app.route("/", methods=["GET"])
 def home():
     return "Horizon WhatsApp Webhook is running", 200
-
+@app.route("/connect", methods=["GET"])
+def connect_whatsapp():
+    return """
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Horizon WhatsApp Connection</title>
+    </head>
+    <body>
+        <h1>Horizon WhatsApp</h1>
+        <p>صفحة ربط رقم واتساب الفندق بمنصة Meta.</p>
+        <p>Embedded Signup configuration is ready.</p>
+    </body>
+    </html>
+    """, 200
 
 @app.route("/webhook", methods=["GET"])
 def verify_webhook():
