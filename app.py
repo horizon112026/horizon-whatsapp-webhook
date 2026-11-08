@@ -17,21 +17,144 @@ def home():
 @app.route("/connect", methods=["GET"])
 def connect_whatsapp():
     return """
-    <!DOCTYPE html>
-    <html lang="ar" dir="rtl">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Horizon WhatsApp Connection</title>
-    </head>
-    <body>
-        <h1>Horizon WhatsApp</h1>
-        <p>صفحة ربط رقم واتساب الفندق بمنصة Meta.</p>
-        <p>Embedded Signup configuration is ready.</p>
-    </body>
-    </html>
-    """, 200
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizon WhatsApp Connection</title>
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 30px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1ebe5d;
+        }
+
+        #status {
+            margin-top: 25px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Horizon WhatsApp</h1>
+
+    <p>
+        ربط رقم واتساب الفندق مع Horizon Cloud API
+        مع الاحتفاظ بـ WhatsApp Business على الجوال.
+    </p>
+
+    <button onclick="launchWhatsAppSignup()">
+        ربط رقم WhatsApp Business
+    </button>
+
+    <div id="status"></div>
+
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '1892603858377343',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v27.0'
+            });
+        };
+    </script>
+
+    <script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/en_US/sdk.js">
+    </script>
+
+    <script>
+        function fbLoginCallback(response) {
+            if (response.authResponse) {
+                const code = response.authResponse.code;
+
+                document.getElementById("status").innerText =
+                    "تم إكمال خطوة التسجيل في Meta بنجاح.\\n" +
+                    "تم استلام رمز التفويض.";
+            } else {
+                document.getElementById("status").innerText =
+                    "لم تكتمل عملية الربط.";
+            }
+        }
+
+        function launchWhatsAppSignup() {
+            document.getElementById("status").innerText =
+                "جاري فتح WhatsApp Embedded Signup...";
+
+            FB.login(
+                fbLoginCallback,
+                {
+                    config_id: '1133590566040031',
+                    response_type: 'code',
+                    override_default_response_type: true,
+                    extras: {
+                        setup: {},
+                    
+    featureType: 'whatsapp_business_app_onboarding'
+                    }
+                }
+            );
+        }
+
+        window.addEventListener(
+            'message',
+            function(event) {
+                if (
+                    event.origin !== 'https://www.facebook.com' &&
+                    event.origin !== 'https://web.facebook.com'
+                ) {
+                    return;
+                }
+
+                try {
+                    const data =
+                        typeof event.data === 'string'
+                            ? JSON.parse(event.data)
+                            : event.data;
+
+                    if (data && data.type === 'WA_EMBEDDED_SIGNUP') {
+                        console.log(
+                            'WhatsApp Embedded Signup event:',
+                            data
+                        );
+
+                        document.getElementById("status").innerText =
+                            "تم استقبال بيانات WhatsApp من Meta.";
+                    }
+                } catch (error) {
+                    console.log(
+                        'Embedded Signup event:',
+                        event.data
+                    );
+                }
+            }
+        );
+    </script>
+
+</body>
+</html>
+    """, 200
 @app.route("/webhook", methods=["GET"])
 def verify_webhook():
     mode = request.args.get("hub.mode")
