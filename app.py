@@ -14,7 +14,9 @@ GRAPH_API_VERSION = "v27.0"
 @app.route("/", methods=["GET"])
 def home():
     return "Horizon WhatsApp Webhook is running", 200
-    @app.route("/privacy", methods=["GET"])
+
+
+@app.route("/privacy", methods=["GET"])
 def privacy_policy():
     return """
 <!DOCTYPE html>
